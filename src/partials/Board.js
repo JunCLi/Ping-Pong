@@ -1,14 +1,16 @@
 import { SVG_NS } from '../settings';
+
 export class Board {
   constructor(width, height) {
     this.width = width;
     this.height = height;
   }
+  
   render(svg) {
-    let rect = document.createElementNS(SVG_NS, 'rect');
-    rect.setAttributeNS(null, 'width', this.width);
-    rect.setAttributeNS(null, 'height', this.height);
-    rect.setAttributeNS(null, 'fill', '#eee');
+    let boardBackground = document.createElementNS(SVG_NS, 'rect');
+    boardBackground.setAttributeNS(null, 'width', this.width);
+    boardBackground.setAttributeNS(null, 'height', this.height);
+    boardBackground.setAttributeNS(null, 'fill', '#eee');
 
     let midLine = document.createElementNS(SVG_NS, 'line');
     midLine.setAttributeNS(null, 'x1', this.width / 2);
@@ -20,7 +22,7 @@ export class Board {
     midLine.setAttributeNS(null, 'stroke-width', '4');
     midLine.setAttributeNS(null, 'fill', 'white');
 
-    svg.appendChild(rect);
+    svg.appendChild(boardBackground);
     svg.appendChild(midLine);
   }
 }
