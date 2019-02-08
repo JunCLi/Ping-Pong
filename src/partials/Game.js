@@ -15,7 +15,9 @@ export default class Game {
     this.gameElement = document.getElementById(this.element)
     this.board = new Board(this.width, this.height);
 
-    PADDLE_VALUES.boardGap = 10;
+    this.paddleWidth = PADDLE_VALUES.paddleWidth;
+    this.paddleHeight = PADDLE_VALUES.paddleHeight;
+    this.boardGap = PADDLE_VALUES.boardGap;
 
     this.player1 = new Paddle(
       this.height,

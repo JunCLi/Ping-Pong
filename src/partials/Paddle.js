@@ -1,5 +1,4 @@
-import { SVG_NS } from '../settings';
-import { PADDLE_VALUES } from '../settings';
+import { SVG_NS, PADDLE_VALUES } from '../settings';
 
 export class Paddle {
   constructor(boardHeight, x, y, up, down) {
