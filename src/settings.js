@@ -5,7 +5,7 @@ export const KEYS = {
   z: 'z',
   up: 'ArrowUp',
   down: 'ArrowDown',
-  spacebar: 'Space'
+  spacebar: ' '
 };
 
 export const PADDLE_VALUES = {
