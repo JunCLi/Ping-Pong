@@ -12,11 +12,9 @@ export class Paddle {
     this.speed = PADDLE_VALUES.paddleSpeed;
     this.score = 0;
 
-    this.move = false;
     this.direction = [];
 
     document.addEventListener('keydown', event => {
-      this.move = true;
       switch (event.key) {
         case this.up:
           this.direction[event.key] = true;
@@ -28,19 +26,15 @@ export class Paddle {
     });
 
     document.addEventListener('keyup', event => {
-      this.move = false;
       this.direction[event.key] = false;
     });
   }
 
   movePaddles() {
-    if (this.move === true) {
-      console.log(this.direction);
-      if (this.direction[this.up]) {
-        this.moveUp();
-      } else if (this.direction[this.down]) {
-        this.moveDown();
-      }
+    if (this.direction[this.up]) {
+      this.moveUp();
+    } else if (this.direction[this.down]) {
+      this.moveDown();
     }
   }
 
