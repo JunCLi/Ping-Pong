@@ -45,26 +45,29 @@ export class Ball {
     } 
     const distX = Math.abs(this.x - (relPaddle.x + halfPaddleWidth));
     const distY = Math.abs(this.y - (relPaddle.y + halfPaddleHeight));
-    if (distX <= (halfPaddleWidth + this.radius)) {
-      if (distY <= (halfPaddleHeight + this.radius)) {
-
-
-
-        if (distY >= halfPaddleHeight) {
-          const cornerDistX = Math.abs(distX - halfPaddleWidth);
-          const cornerDistY = Math.abs(distY - halfPaddleHeight);
-          
-          console.log(`${cornerDistX} : ${cornerDistY}`);
-          console.log(Math.pow(cornerDistX, 2) + Math.pow(cornerDistY, 2));
-          console.log(Math.pow(this.radius, 2));
-
-          if ((Math.pow(cornerDistX, 2) + Math.pow(cornerDistY, 2)) <= Math.pow(this.radius, 2)) {
-            this.vx *= -1;
-          }
-        } else {
-          this.vx *= -1;
+    if (distX <= (halfPaddleWidth + this.radius) && distY <= (halfPaddleHeight + this.radius)) {
+      if (distY >= halfPaddleHeight) {
+        const cornerDistX = Math.abs(distX - halfPaddleWidth);
+        const cornerDistY = Math.abs(distY - halfPaddleHeight);
+        if ((Math.pow(cornerDistX, 2) + Math.pow(cornerDistY, 2)) <= Math.pow(this.radius, 2)) {
+          this.paddleCollisionPhysics('corner', halfPaddleWidth);
         }
-      }
+      } else {
+        this.paddleCollisionPhysics('center', halfPaddleWidth);
+      } 
+    }
+  }
+
+  paddleCollisionPhysics(paddleSpot, halfPaddleWidth) {
+    if (this.x < PADDLE_VALUES.boardGap + halfPaddleWidth || this.x > this.boardWidth - PADDLE_VALUES.boardGap - halfPaddleWidth) {
+      this.vy *= -1.5;
+    }
+    if (paddleSpot === 'corner') {
+      this.vx *= -1;
+      this.vy *= 1.5;
+      console.log('hi');
+    } else {
+      this.vx *= -1;
     }
   }
 
@@ -93,6 +96,10 @@ export class Ball {
   render(svg, player1, player2) {
     this.ballMovement();
     this.wallCollision();
+
+    this.x = 490;
+    this.y = 102;
+
     this.paddleCollision(player1, player2);
 
     let pongBall = document.createElementNS(SVG_NS, 'circle');
