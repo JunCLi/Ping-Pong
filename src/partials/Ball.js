@@ -6,24 +6,27 @@ export class Ball {
     this.boardWidth = boardWidth;
     this.boardHeight = boardHeight;
     this.direction = 1;
+    this.baseSpeedMagnifier = 1 / 2;
+
+    this.speedMagnifier = this.baseSpeedMagnifier * 1.5;
+    this.paddleHitMuliplier = 2;
 
     this.resetBall();
     
   }
 
   instantiateDirection() {
-    this.vy = Math.floor(Math.random() * 10 - 5);
+    this.vy = Math.floor(Math.random() * 8 - 4);
     if (this.vy === 0) {
       this.instantiateDirection();
     }
     this.vx = this.direction * (6 - Math.abs(this.vy));
-    // console.log(this.vy);
-    // console.log(this.vx);
   }
 
   resetBall() {
     this.x = this.boardWidth / 2;
     this.y = this.boardHeight / 2;
+    this.speedMagnifier = this.baseSpeedMagnifier;
     this.instantiateDirection();
   }
 
@@ -60,20 +63,34 @@ export class Ball {
 
   paddleCollisionPhysics(paddleSpot, halfPaddleWidth) {
     if (this.x < PADDLE_VALUES.boardGap + halfPaddleWidth || this.x > this.boardWidth - PADDLE_VALUES.boardGap - halfPaddleWidth) {
-      this.vy *= -1.5;
+      this.vy *= -1.25;
+      this.vx *= 0.75;
+      this.speedMagnifier *= this.paddleHitMuliplier;
     }
     if (paddleSpot === 'corner') {
-      this.vx *= -1;
+      this.vx *= -0.75;
       this.vy *= 1.5;
-      console.log('hi');
+      this.speedMagnifier *= this.paddleHitMuliplier;
+      // console.log('hi');
     } else {
       this.vx *= -1;
+      this.speedMagnifier *= this.paddleHitMuliplier;
+    }
+  }
+
+  ballAcceleration() {
+    const speedDiff = this.speedMagnifier - this.baseSpeedMagnifier;
+    if (speedDiff * 100 > 1) {
+      this.speedMagnifier -= speedDiff / 100;
+    } else {
+      this.speedMagnifier = this.baseSpeedMagnifier;
     }
   }
 
   ballMovement() {
-    this.x += this.vx * 2 / 3;
-    this.y += this.vy * 2 / 3;
+    this.ballAcceleration();
+    this.x += this.vx * this.speedMagnifier;
+    this.y += this.vy * this.speedMagnifier;
   }
 
   goal(player) {
@@ -97,8 +114,8 @@ export class Ball {
     this.ballMovement();
     this.wallCollision();
 
-    this.x = 490;
-    this.y = 102;
+    // this.x = 490;
+    // this.y = 102;
 
     this.paddleCollision(player1, player2);
 
