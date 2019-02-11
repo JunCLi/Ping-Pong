@@ -60,6 +60,9 @@ export default class Game {
       this.player1.speed = 0;
       this.player2.speed = 0;
       return;
+    } else {
+      this.player1.speed = PADDLE_VALUES.paddleSpeed;
+      this.player2.speed = PADDLE_VALUES.paddleSpeed;
     }
     
 

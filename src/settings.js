@@ -12,5 +12,5 @@ export const PADDLE_VALUES = {
   paddleWidth: 8,
   paddleHeight: 56,
   boardGap: 10,
-  paddleSpeed: 10
+  paddleSpeed: 5
 };

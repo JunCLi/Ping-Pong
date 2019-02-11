@@ -12,16 +12,35 @@ export class Paddle {
     this.speed = PADDLE_VALUES.paddleSpeed;
     this.score = 0;
 
+    this.move = false;
+    this.direction;
+
     document.addEventListener('keydown', event => {
+      this.move = true;
       switch (event.key) {
         case this.up:
-          this.moveUp();
+          this.direction = this.up;
           break;
         case this.down:
-          this.moveDown();
+          this.direction = this.down;
           break;
       }
     });
+
+    document.addEventListener('keyup', () => {
+      this.move = false;
+      this.direction = '';
+    });
+  }
+
+  movePaddles() {
+    if (this.move === true) {
+      if (this.direction === this.up) {
+        this.moveUp();
+      } else if (this.direction === this.down) {
+        this.moveDown();
+      }
+    }
   }
 
   moveUp() {
@@ -35,6 +54,8 @@ export class Paddle {
   }
 
   render(svg) {
+    this.movePaddles();
+
     let paddle = document.createElementNS(SVG_NS, 'rect');
     paddle.setAttributeNS(null, 'width', this.width);
     paddle.setAttributeNS(null, 'height', this.height);
