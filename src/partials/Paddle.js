@@ -13,31 +13,32 @@ export class Paddle {
     this.score = 0;
 
     this.move = false;
-    this.direction;
+    this.direction = [];
 
     document.addEventListener('keydown', event => {
       this.move = true;
       switch (event.key) {
         case this.up:
-          this.direction = this.up;
+          this.direction[event.key] = true;
           break;
         case this.down:
-          this.direction = this.down;
+          this.direction[event.key] = true;
           break;
       }
     });
 
-    document.addEventListener('keyup', () => {
+    document.addEventListener('keyup', event => {
       this.move = false;
-      this.direction = '';
+      this.direction[event.key] = false;
     });
   }
 
   movePaddles() {
     if (this.move === true) {
-      if (this.direction === this.up) {
+      console.log(this.direction);
+      if (this.direction[this.up]) {
         this.moveUp();
-      } else if (this.direction === this.down) {
+      } else if (this.direction[this.down]) {
         this.moveDown();
       }
     }

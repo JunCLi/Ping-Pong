@@ -67,6 +67,7 @@ export class Ball {
       this.vx *= 0.75;
       this.speedMagnifier *= this.paddleHitMuliplier;
     }
+    
     if (paddleSpot === 'corner') {
       this.vx *= -0.75;
       this.vy *= 1.5;
