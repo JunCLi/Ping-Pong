@@ -6,7 +6,7 @@ import { Score } from './Score';
 
 export default class Game {
   constructor(element, width, height) {
-    this.pause = false;
+    this.pause = true;
 
     this.element = element;
     this.width = width;

@@ -9,18 +9,18 @@ export class Ball {
     this.baseSpeedMagnifier = 1 / 2;
 
     this.speedMagnifier = this.baseSpeedMagnifier * 1.5;
-    this.paddleHitMuliplier = 2;
+    this.paddleHitMuliplier = 2.5;
 
     this.resetBall();
     
   }
 
   instantiateDirection() {
-    this.vy = Math.floor(Math.random() * 8 - 4);
+    this.vy = Math.floor(Math.random() * 6 - 3);
     if (this.vy === 0) {
       this.instantiateDirection();
     }
-    this.vx = this.direction * (6 - Math.abs(this.vy));
+    this.vx = this.direction * 4;
   }
 
   resetBall() {
@@ -31,9 +31,15 @@ export class Ball {
   }
 
   wallCollision() {
-    if (this.y - this.radius <= 0 || this.y + this.radius >= this.boardHeight) {
-      this.vy *= -1;
-    } 
+    if (this.vy < 0) {
+      if (this.y - this.radius <= 0) {
+        this.vy *= -1;
+      }
+    } else {
+      if (this.y + this.radius >= this.boardHeight) {
+        this.vy *= -1;
+      }
+    }
   }
   
   paddleCollision(player1, player2) {
@@ -46,43 +52,54 @@ export class Ball {
     if (this.vx < 0) {
       relPaddle = player1;
     } 
+
     const distX = Math.abs(this.x - (relPaddle.x + halfPaddleWidth));
     const distY = Math.abs(this.y - (relPaddle.y + halfPaddleHeight));
+
     if (distX <= (halfPaddleWidth + this.radius) && distY <= (halfPaddleHeight + this.radius)) {
-      if (distY >= halfPaddleHeight) {
-        const cornerDistX = Math.abs(distX - halfPaddleWidth);
-        const cornerDistY = Math.abs(distY - halfPaddleHeight);
-        if ((Math.pow(cornerDistX, 2) + Math.pow(cornerDistY, 2)) <= Math.pow(this.radius, 2)) {
-          this.paddleCollisionPhysics('corner', halfPaddleWidth);
-        }
-      } else {
-        this.paddleCollisionPhysics('center', halfPaddleWidth);
-      } 
+
+      const cornerDist = Math.pow(Math.abs(distX - halfPaddleWidth), 2) + Math.pow(Math.abs(distY - halfPaddleHeight), 2);
+
+      if (distY <= halfPaddleHeight || cornerDist >= Math.pow(this.radius, 2)) {
+        this.paddleCollisionPhysics(relPaddle, halfPaddleWidth, halfPaddleHeight);
+      }
     }
   }
 
-  paddleCollisionPhysics(paddleSpot, halfPaddleWidth) {
+  paddleCollisionPhysics(relPaddle, halfPaddleWidth, halfPaddleHeight) {
+    if (this.speedMagnifier > 3 * this.baseSpeedMagnifier) {
+      this.speedMagnifier = 3 * this.baseSpeedMagnifier
+    } else {
+      this.speedMagnifier *= this.paddleHitMuliplier;
+    }
+
+    const padY = (this.y - (relPaddle.y + halfPaddleHeight))
+
     if (this.x < PADDLE_VALUES.boardGap + halfPaddleWidth || this.x > this.boardWidth - PADDLE_VALUES.boardGap - halfPaddleWidth) {
       this.vy *= -1.25;
       this.vx *= 0.75;
-      this.speedMagnifier *= this.paddleHitMuliplier;
-    }
-    
-    if (paddleSpot === 'corner') {
-      this.vx *= -0.75;
-      this.vy *= 1.5;
-      this.speedMagnifier *= this.paddleHitMuliplier;
-      // console.log('hi');
+      return;
     } else {
+      
       this.vx *= -1;
-      this.speedMagnifier *= this.paddleHitMuliplier;
+
+      if (Math.abs(this.vy + padY / 10) < 3) {
+        this.vy += padY / 5 ;
+      } else {
+        if (this.vy > 0) {
+          this.vy = 3;
+        } else {
+          this.vy = -3;
+        }
+      }
     }
   }
 
   ballAcceleration() {
+    console.log(this.speedMagnifier);
     const speedDiff = this.speedMagnifier - this.baseSpeedMagnifier;
     if (speedDiff * 100 > 1) {
-      this.speedMagnifier -= speedDiff / 100;
+      this.speedMagnifier -= speedDiff / 75;
     } else {
       this.speedMagnifier = this.baseSpeedMagnifier;
     }
@@ -91,7 +108,7 @@ export class Ball {
   ballMovement() {
     this.ballAcceleration();
     this.x += this.vx * this.speedMagnifier;
-    this.y += this.vy * this.speedMagnifier;
+    this.y += this.vy * this.speedMagnifier / 1.5;
   }
 
   goal(player) {
@@ -115,7 +132,7 @@ export class Ball {
     this.ballMovement();
     this.wallCollision();
 
-    // this.x = 490;
+    // this.x = 500;
     // this.y = 102;
 
     this.paddleCollision(player1, player2);
@@ -129,8 +146,6 @@ export class Ball {
     svg.appendChild(pongBall);
 
     this.goalDetection(player1, player2);
-    // console.log(this.y);
-    // console.log(this.x);
   }
 }
 
