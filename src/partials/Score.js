@@ -1,17 +1,17 @@
 import { SVG_NS } from '../settings'
 
 export class Score {
+
+  // Instantiate score properties
   constructor(x, y, size) {
-    this._x = x;
-    this._y = y;
-    this._size = size;
+    this.x = x;
+    this.y = y;
+    this.size = size;
   }
 
-  get x() { return this._x; }
-  get y() { return this._y; }
-  get size() { return this._size; }
-
   render(svg, score) {
+
+    // Render score board
     let text = document.createElementNS(SVG_NS, 'text');
     text.setAttributeNS(null, 'x', this.x);
     text.setAttributeNS(null, 'y', this.y);

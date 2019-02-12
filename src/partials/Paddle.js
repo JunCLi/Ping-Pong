@@ -2,6 +2,8 @@ import { SVG_NS, PADDLE_VALUES } from '../settings';
 
 export class Paddle {
   constructor(boardHeight, x, y, up, down) {
+
+    // Initial and fixed paddle values
     this.boardHeight = boardHeight;
     this.width = PADDLE_VALUES.paddleWidth;
     this.height = PADDLE_VALUES.paddleHeight;
@@ -12,8 +14,10 @@ export class Paddle {
     this.speed = PADDLE_VALUES.paddleSpeed;
     this.score = 0;
 
+    // Direction array to store paddle direction
     this.direction = [];
 
+    // Event Listner to detect keypresses
     document.addEventListener('keydown', event => {
       switch (event.key) {
         case this.up:
@@ -25,11 +29,13 @@ export class Paddle {
       }
     });
 
+    // Detect when key is no longer pressed
     document.addEventListener('keyup', event => {
       this.direction[event.key] = false;
     });
   }
 
+  // Move paddles depending on which key is pressed
   movePaddles() {
     if (this.direction[this.up]) {
       this.moveUp();
@@ -38,6 +44,7 @@ export class Paddle {
     }
   }
 
+  // Actual movement functions
   moveUp() {
     this.y -= this.speed;
     this.y = Math.max(this.y, 0);
@@ -49,8 +56,11 @@ export class Paddle {
   }
 
   render(svg) {
+
+    // Move paddle before render
     this.movePaddles();
 
+    // Render paddles
     let paddle = document.createElementNS(SVG_NS, 'rect');
     paddle.setAttributeNS(null, 'width', this.width);
     paddle.setAttributeNS(null, 'height', this.height);

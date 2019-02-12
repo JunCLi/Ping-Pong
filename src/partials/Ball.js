@@ -1,6 +1,8 @@
 import { SVG_NS, PADDLE_VALUES } from '../settings';
 
 export class Ball {
+
+  // Instantiate ball properties
   constructor(radius, boardWidth, boardHeight) {
     this.radius = radius;
     this.boardWidth = boardWidth;
@@ -11,10 +13,12 @@ export class Ball {
     this.speedMagnifier = this.baseSpeedMagnifier * 1.5;
     this.paddleHitMuliplier = 2.5;
 
+    // Reset ball on creation
     this.resetBall();
     
   }
 
+  // Initial direction vector
   instantiateDirection() {
     this.vy = Math.floor(Math.random() * 6 - 3);
     if (this.vy === 0) {
@@ -23,6 +27,7 @@ export class Ball {
     this.vx = this.direction * 4;
   }
 
+  // Reset ball function
   resetBall() {
     this.x = this.boardWidth / 2;
     this.y = this.boardHeight / 2;
@@ -30,6 +35,7 @@ export class Ball {
     this.instantiateDirection();
   }
 
+  // Robust wall collision detection function to accomodate for acceleration
   wallCollision() {
     if (this.vy < 0) {
       if (this.y - this.radius <= 0) {
@@ -42,47 +48,60 @@ export class Ball {
     }
   }
   
+  // Detect Paddle collision
   paddleCollision(player1, player2) {
 
     const halfPaddleWidth = PADDLE_VALUES.paddleWidth / 2;
     const halfPaddleHeight = PADDLE_VALUES.paddleHeight / 2;
 
+    // Determine relevant paddle
     let relPaddle = player2
 
     if (this.vx < 0) {
       relPaddle = player1;
     } 
 
+    // Distance X and Y from center of ball and center of paddle
     const distX = Math.abs(this.x - (relPaddle.x + halfPaddleWidth));
     const distY = Math.abs(this.y - (relPaddle.y + halfPaddleHeight));
 
+    // Detect collision based on distance between centers for sides
     if (distX <= (halfPaddleWidth + this.radius) && distY <= (halfPaddleHeight + this.radius)) {
 
+      // Pythagorean theorem to determine corner of paddle
       const cornerDist = Math.pow(Math.abs(distX - halfPaddleWidth), 2) + Math.pow(Math.abs(distY - halfPaddleHeight), 2);
 
+      // Check for collision at corners of paddle
       if (distY <= halfPaddleHeight || cornerDist >= Math.pow(this.radius, 2)) {
         this.paddleCollisionPhysics(relPaddle, halfPaddleWidth, halfPaddleHeight);
       }
     }
   }
 
+  // Additional physics algorithms to make paddle collision more dyanmic
   paddleCollisionPhysics(relPaddle, halfPaddleWidth, halfPaddleHeight) {
+
+    // Increase speed of ball on paddle collision
     if (this.speedMagnifier > 3 * this.baseSpeedMagnifier) {
       this.speedMagnifier = 3 * this.baseSpeedMagnifier
     } else {
       this.speedMagnifier *= this.paddleHitMuliplier;
     }
 
+    // Save point of impact
     const padY = (this.y - (relPaddle.y + halfPaddleHeight))
 
+    // If it hits the paddle at the back half, change Y vector but not X
     if (this.x < PADDLE_VALUES.boardGap + halfPaddleWidth || this.x > this.boardWidth - PADDLE_VALUES.boardGap - halfPaddleWidth) {
       this.vy *= -1.25;
       this.vx *= 0.75;
       return;
     } else {
       
+      // Reverse X otherwise
       this.vx *= -1;
 
+      // Modify Y vector based on where it hits the paddle
       if (Math.abs(this.vy + padY / 10) < 3) {
         this.vy += padY / 5 ;
       } else {
@@ -95,8 +114,8 @@ export class Ball {
     }
   }
 
+  // Decelerate the ball as it travels across the board
   ballAcceleration() {
-    console.log(this.speedMagnifier);
     const speedDiff = this.speedMagnifier - this.baseSpeedMagnifier;
     if (speedDiff * 100 > 1) {
       this.speedMagnifier -= speedDiff / 75;
@@ -105,17 +124,20 @@ export class Ball {
     }
   }
 
+  // Calculate new position of ball based on vectors and acceleration
   ballMovement() {
     this.ballAcceleration();
     this.x += this.vx * this.speedMagnifier;
     this.y += this.vy * this.speedMagnifier / 1.5;
   }
 
+  // Add score on goal and reset ball
   goal(player) {
     player.score++;
     this.resetBall();
   }
 
+  // Detect which player scored
   goalDetection(player1, player2) {
     const rightGoal = this.x - this.radius < 0;
     const leftGoal = this.x + this.radius > this.boardWidth
@@ -129,14 +151,14 @@ export class Ball {
   }
 
   render(svg, player1, player2) {
+
+    // Calculate collisions and new ball position before render
     this.ballMovement();
     this.wallCollision();
 
-    // this.x = 500;
-    // this.y = 102;
-
     this.paddleCollision(player1, player2);
 
+    // Render ball
     let pongBall = document.createElementNS(SVG_NS, 'circle');
     pongBall.setAttributeNS(null, 'cx', this.x);
     pongBall.setAttributeNS(null, 'cy', this.y);
@@ -145,6 +167,7 @@ export class Ball {
 
     svg.appendChild(pongBall);
 
+    // Check for goal
     this.goalDetection(player1, player2);
   }
 }

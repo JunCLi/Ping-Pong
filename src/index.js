@@ -4,6 +4,7 @@ import Game from './partials/Game';
 // create a game instance
 const game = new Game('game', 512, 256);
 
+// Self invoking function to run game
 (function gameLoop() {
   game.render();
   requestAnimationFrame(gameLoop);

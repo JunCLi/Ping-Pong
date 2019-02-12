@@ -7,11 +7,14 @@ export class Board {
   }
   
   render(svg) {
+
+    // render background board
     let boardBackground = document.createElementNS(SVG_NS, 'rect');
     boardBackground.setAttributeNS(null, 'width', this.width);
     boardBackground.setAttributeNS(null, 'height', this.height);
     boardBackground.setAttributeNS(null, 'fill', '#eee');
 
+    // Render halfway line
     let midLine = document.createElementNS(SVG_NS, 'line');
     midLine.setAttributeNS(null, 'x1', this.width / 2);
     midLine.setAttributeNS(null, 'y1', 0);
